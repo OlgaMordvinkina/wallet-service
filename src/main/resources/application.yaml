@@ -1,0 +1,27 @@
+server:
+  port: ${WALLET_SERVICE_PORT:8080}
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: wallet-service
+  hibernate:
+    dialect: org.hibernate.dialect.PostgreSQL10Dialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST_NAME:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:wallet}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:1234}
+    hikari:
+      maximum-pool-size: ${MAXIMUM_POOL_SIZE:20}
+      connection-timeout: ${CONNECTION_TIMEOUT:60000}
+      max-lifetime: ${MAX_LIFETIME:60000}
+      idle-timeout: ${IDLE_TIMEOUT:45000}
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+logging:
+  level:
+    ru.itk.wallet_service.web.controller: ${LOG_LEVEL_CONTROLLERS:DEBUG}
+    org.apache.coyote.http11.Http11Processor: ERROR

@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-wallet-table
+      author: olga
+      changes:
+        - createTable:
+            tableName: wallet
+            columns:
+              - column:
+                  name: wallet_id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: amount
+                  type: NUMERIC(10,2)
+                  constraints:
+                    nullable: false

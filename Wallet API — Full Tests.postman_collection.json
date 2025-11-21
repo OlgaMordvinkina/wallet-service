@@ -1,0 +1,405 @@
+{
+	"info": {
+		"_postman_id": "92c9ac5d-5d8f-415b-bdc7-3e9910a71f04",
+		"name": "Wallet API — Full Tests",
+		"description": "Полная коллекция для тестирования Wallet API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25508332"
+	},
+	"item": [
+		{
+			"name": "1. Create wallet — success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 201\", function () {",
+							"   pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Response has walletId and amount=0\", function () {",
+							"   const json = pm.response.json();",
+							"   pm.expect(json.walletId).to.exist;",
+							"   pm.expect(json.amount).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/wallet/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Update wallet — deposit success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+							"pm.test(\"Balance >= 100\", () => pm.expect(pm.response.json().amount).to.be.above(0));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"operationType\": \"DEPOSIT\",\n  \"amount\": 100\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Update wallet — withdraw success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"operationType\": \"WITHDRAW\",\n  \"amount\": 10\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Get balance — success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+							"pm.test(\"Has amount\", () => pm.expect(pm.response.json().amount).to.exist);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/wallets/{{walletId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallets",
+						"{{walletId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Update wallet — insufficient funds (409)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 409\", () => pm.response.to.have.status(409));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"operationType\": \"WITHDRAW\",\n  \"amount\": 9999999\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Update wallet — wallet not found (404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 404\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"walletId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\n  \"operationType\": \"DEPOSIT\",\n  \"amount\": 10\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Get balance — wallet not found (404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 404\", () => pm.response.to.have.status(404));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/wallets/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallets",
+						"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Update wallet — invalid JSON (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ invalid json }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "9. Update wallet — invalid amount < 0.01 (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"operationType\": \"DEPOSIT\",\n  \"amount\": 0\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10. Update wallet — missing fields (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"walletId\": \"{{walletId}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "walletId",
+			"value": ""
+		}
+	]
+}
